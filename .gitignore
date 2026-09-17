@@ -1,0 +1,8 @@
+﻿node_modules/
+__pycache__/
+*.pyc
+*.zip
+cloudflared.exe
+screenshots/
+.DS_Store
+Thumbs.db

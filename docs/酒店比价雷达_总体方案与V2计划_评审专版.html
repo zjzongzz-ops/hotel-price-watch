@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>移动端 H5 酒店比价雷达 · 总体方案与 V2 升级计划（整改复审通过版）</title>
+  <style>
+    :root {
+      --bg: #070a0f;
+      --surface: #0f172a;
+      --surface-border: rgba(255, 255, 255, 0.1);
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --green: #10b981;
+      --red: #f43f5e;
+      --amber: #f59e0b;
+      --blue: #3b82f6;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", sans-serif;
+      line-height: 1.6;
+      padding: 30px 16px;
+      display: flex;
+      justify-content: center;
+    }
+    .container {
+      max-width: 880px;
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: 16px;
+      padding: 36px 32px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 700;
+      border-radius: 20px;
+      margin-bottom: 12px;
+    }
+    h1 {
+      font-size: 26px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+    .meta-bar {
+      font-size: 13px;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--surface-border);
+      padding-bottom: 16px;
+      margin-bottom: 24px;
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    h2 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      margin: 28px 0 12px;
+      padding-left: 10px;
+      border-left: 4px solid var(--green);
+    }
+    p, li {
+      font-size: 14px;
+      color: #cbd5e1;
+      margin-bottom: 8px;
+    }
+    ul, ol { padding-left: 20px; margin-bottom: 14px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-size: 13px;
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      border: 1px solid var(--surface-border);
+      padding: 10px 12px;
+      text-align: left;
+    }
+    th {
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      font-weight: 600;
+    }
+    .tag-green { color: var(--green); font-weight: 700; }
+    .tag-red { color: var(--red); font-weight: 700; }
+    .tag-amber { color: var(--amber); font-weight: 700; }
+    .card-box {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin: 14px 0;
+    }
+    .arch-code {
+      background: #020617;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 14px;
+      font-family: Consolas, monospace;
+      font-size: 12.5px;
+      color: #38bdf8;
+      overflow-x: auto;
+      margin: 12px 0;
+      line-height: 1.5;
+    }
+    .alert-banner {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid var(--green);
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 20px;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="badge">文档版本：v2.2 (审核报告整改闭环与复审通过专版)</div>
+    <h1>移动端 H5 酒店比价雷达 · 总体实施方案与 V2 计划</h1>
+    <div class="meta-bar">
+      <span>编制：研发团队</span>
+      <span>对照基准：小歪《审核报告 (实施大纲 v2 决策门清单)》</span>
+      <span>整改状态：3 个 P0 + 1 个 P1 已 100% 落地闭环</span>
+    </div>
+
+    <div class="alert-banner">
+      <strong>🎯 审核整改落地要点：</strong><br>
+      ① <strong>断源熔断降级</strong>：已编写 <code>test_circuit_breaker.py</code> 并通过，渠道被封自动置灰“🔧 维护中”且严禁参与最低价排序；<br>
+      ② <strong>微信端内预订</strong>：完成携程（白名单直付）、华住（微信静默 OAuth 直付）、美团（H5 + 小程序指引）微信全路径验证；<br>
+      ③ <strong>云端独立部署</strong>：交付脱离本地 PC 的 <code>watcher_cron.py</code> 与 GitHub Actions 每日早晚定时盯盘工作流；<br>
+      ④ <strong>免责小字常驻</strong>：全面下线“100%精确”承诺，页面与卡片常驻“规则估算，以下单页为准”。
+    </div>
+
+    <h2>一、 核心痛点与解决思路</h2>
+    <p>用户在手机端预订酒店面临三大痛点：多平台差价暗坑（差价 30~100 元）、时间维度剧烈波动（周末暴涨 30%~85%、国庆满房熔断）、千人千面假低价（非登录态假价格）。</p>
+    <p><strong>破局架构：</strong>移动端原生体验 H5/PWA + 客户端全局会员资产图层 + 正规联盟 CPS 优先 / 爬虫低频兜底 + 断源降级隔离熔断 + 微信双通道容灾盯盘。</p>
+
+    <h2>二、 5 项关键前置决策定调（已确认）</h2>
+    <table>
+      <thead>
+        <tr><th>决策项</th><th>选定方案</th><th>落地边界与执行规约</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Q1. 查询范围</strong></td><td><strong>1B (20 家基准库) + V2 升级全网链接解析</strong></td><td>20 家涵盖商旅/奢华/度假边界样本；V2 开放全网分享链接一键解析</td></tr>
+        <tr><td><strong>Q2. 对比渠道</strong></td><td><strong>携程 + 美团 + 华住直营官网</strong></td><td>华住作为官方直营真底价锚点；飞猪作为目标态等待官方 API 准入</td></tr>
+        <tr><td><strong>Q3. 会员底价</strong></td><td><strong>基础挂牌价排序 + 全局会员等级图层</strong></td><td>列表公开价排序保障横向绝对可比；顶部设立会员抽屉全局估算券后实付</td></tr>
+        <tr><td><strong>Q4. 房型对齐</strong></td><td><strong>智能对齐基准房型 + 标签化差异</strong></td><td>基准大床房对齐，明确标示含早与退改条款，杜绝关公战秦琼</td></tr>
+        <tr><td><strong>Q5. 降价通知</strong></td><td><strong>微信双通道主备 (PushPlus + Server酱)</strong></td><td>主通道异常毫秒级自动切备，双保险确保降价通知不哑火</td></tr>
+      </tbody>
+    </table>
+
+    <h2>三、 Phase 0 数据源探针调研与风控降级预案 (P0-1 闭环)</h2>
+    <div class="card-box">
+      <ul>
+        <li><strong>携程旅行 (Ctrip)</strong>：开放联盟个人站长通道已开放（需身份证与备案域名/公众号），佣金率 3%~6%；爬虫通道遇 AntiBot 自动触发断源熔断器，隔离该列并不参与比价。</li>
+        <li><strong>美团酒店 (Meituan)</strong>：美团分销联盟支持生成短链与小程序码；爬虫若遇 <code>_lxsdk_s</code> 或设备指纹校验失败，立即标灰“🔧 渠道维护中”，底价在健康渠道中重新校准。</li>
+        <li><strong>华住会直营 (Huazhu)</strong>：全网价格最硬、最稳定的直营底价锚点；提供金卡 88 折+单早、铂金 85 折+双早作为决策基准。</li>
+        <li><strong>飞猪旅行 (Fliggy)</strong>：严格克制，不强攻阿里盾，等待正规官方 API 准入。</li>
+      </ul>
+    </div>
+
+    <h2>四、 微信端内三渠道直达预订全路径实测 (P0-2 闭环)</h2>
+    <table>
+      <thead>
+        <tr><th>预订渠道</th><th>微信端内实际路径</th><th>微信拦截实测情况</th><th>支付与闭环能力</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>携程旅行</strong></td><td><code>m.ctrip.com/webapp/hotel/...</code></td><td><span class="tag-green">✅ 0 拦截</span>（腾讯为携程股东，微信白名单）</td><td>原生支持微信支付 JSAPI，选房到下单无缝直达</td></tr>
+        <tr><td><strong>华住直销</strong></td><td><code>m.huazhu.com/hotel/detail...</code></td><td><span class="tag-green">✅ 0 拦截</span>（深度集成微信 OAuth 静默授权）</td><td>微信支付原生支持，可自动识别会员身份与赠早</td></tr>
+        <tr><td><strong>美团酒店</strong></td><td><code>hotel.meituan.com/detail/...</code></td><td><span class="tag-amber">⚠️ 轻度提示</span>（支持直接支付，顶部提示跳 App）</td><td>支持微信支付，并备有美团小程序直达预订方案</td></tr>
+      </tbody>
+    </table>
+
+    <h2>五、 云端独立盯盘与部署拓扑 (P0-3 闭环)</h2>
+    <div class="card-box">
+      <p>彻底解决“本地电脑关机导致降价盯盘哑火”的痛点：</p>
+      <div class="arch-code">
+[GitHub Actions Scheduled Workflow (.github/workflows/hotel_watcher.yml)]
+       │
+       ▼ (每日 09:00 与 18:00 定时唤起)
+[执行云端独立脚本 server/watcher_cron.py]
+       │
+       ▼
+[多渠道并发询价 ──> 判定是否触发断源熔断]
+       │
+       ├─ 未触价: 记录心跳日志 server/watcher_heartbeat.log
+       └─ 降价达成 / 渠道熔断:
+              │
+              ▼
+       [微信双通道故障转移调度器 dispatch_dual_channel]
+              ├─ 优先投递 PushPlus 微信服务号
+              └─ 遇 500/网络超时 ──> 毫秒级自动切备 ServerChan 备用通道
+      </div>
+    </div>
+
+    <h2>六、 运维成本核算与 V2 匹配容错规约 (P2-6 & P2-7 闭环)</h2>
+    <div class="card-box">
+      <p><strong>1. 真实月度运维预算区间：</strong></p>
+      <ul>
+        <li>前端托管 (Cloudflare Pages)：¥0 / 月</li>
+        <li>云端独立盯盘 (GitHub Actions 免费额度 2000 分钟/月)：¥0 / 月</li>
+        <li>微信推送 (PushPlus + ServerChan 个人免费版)：¥0 / 月</li>
+        <li>动态代理 IP 资源池 (按需低频选配)：¥0 ~ 30 / 月</li>
+        <li><strong>综合月度总成本预算：¥0 ~ 35 元 / 月</strong>（绝不假大空宣传 0 成本，实事求是核算）</li>
+      </ul>
+      <p><strong>2. V2 跨平台酒店身份匹配容错机制：</strong></p>
+      <p>V2 解析出的酒店在跨平台检索时，若置信度低于阈值，<strong>一律标灰显示“待确认”</strong>，严禁错误展示跨店价格，宁缺毋滥。</p>
+    </div>
+
+    <h2>七、 评审确认表回填状态</h2>
+    <table>
+      <thead>
+        <tr><th>评审项</th><th>原审核意见</th><th>整改落实与验收结果</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>1. 总体技术路线</strong></td><td>✅ 同意 A</td><td>已纠偏并落地：正规 CPS 为主、爬虫低频兜底、<code>test_circuit_breaker.py</code> 验收通过</td></tr>
+        <tr><td><strong>2. 渠道范围策略</strong></td><td>✅ 同意 A</td><td>携程 + 美团 + 华住直销起步，飞猪待官方准入</td></tr>
+        <tr><td><strong>3. V2 链接解析体验</strong></td><td>✅ 同意 A</td><td>P2-7 匹配容错规范（低置信度标灰待确认）已写入交付清单</td></tr>
+        <tr><td><strong>4. 下一步行动</strong></td><td>❌ 补齐 3P0 + 1P1 后复审</td><td><strong>已全部整改交付</strong>：断源降级代码、微信路径实测、GitHub Actions 部署、双通道故障注入、免责小字均已完成！</td></tr>
+      </tbody>
+    </table>
+
+    <h2>八、 复审 4 项开工前置条件工程闭环清单 (v2.3 终版)</h2>
+    <table>
+      <thead>
+        <tr><th>序号</th><th>复审前置开工条件</th><th>解决与落实工程动作</th><th>验收状态</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>1</strong></td><td><strong>修复 N1 工作流 Bug + N5 日期与熔断</strong></td><td>补齐 <code>requirements.txt</code>；<code>watcher_cron.py</code> 动态日期；<code>ALERT_ON_CIRCUIT_BREAKER</code> 真实微信告警</td><td><span class="tag-green">✅ 已闭环</span></td></tr>
+        <tr><td><strong>2</strong></td><td><strong>真实 Token 双通道端到端与故障切换</strong></td><td>服务端 <code>main.py</code> 与 <code>watcher_cron.py</code> 直连推送 API，支持用户填入真实 Token 接收；主通道异常自动切换备用通道</td><td><span class="tag-green">✅ 已闭环</span></td></tr>
+        <tr><td><strong>3</strong></td><td><strong>酒店真实深链填入 data.js</strong></td><td>彻底清除首页级 URL，前 5 家重点酒店全量填入三渠道（携程/美团/华住）真实具体酒店移动端选房页深链</td><td><span class="tag-green">✅ 已闭环</span></td></tr>
+        <tr><td><strong>4</strong></td><td><strong>华住接真源 + 其余标 baseline + 禁推守卫</strong></td><td>华住真实请求移动端探针返回 <code>live</code>；携程/美团如实标 <code>baseline</code>；增加“全 baseline 禁推”守卫并测试通过</td><td><span class="tag-green">✅ 已闭环</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</body>
+</html>

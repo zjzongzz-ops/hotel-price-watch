@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>酒店比价雷达 · 移动端 H5 (Hotel Radar)</title>
+  
+  <!-- PWA 元数据支持 -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#070a0f" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="比价雷达" />
+  
+  <!-- 样式表 -->
+  <link rel="stylesheet" href="css/style.css" />
+  
+  <!-- GSAP 动画引擎 (本地自托管，保障国内网络极速加载与离线可用) -->
+  <script src="js/libs/gsap.min.js"></script>
+</head>
+<body>
+
+  <!-- 手机应用框架 -->
+  <div class="mobile-shell">
+    
+    <!-- 顶部状态与品牌栏 -->
+    <header class="app-header">
+      <div class="header-top-row">
+        <div class="brand-title-wrap">
+          <div class="radar-logo">📡</div>
+          <h1 class="brand-h1">酒店比价雷达 <span>H5 原型 v2</span></h1>
+        </div>
+        <div class="header-actions">
+          <button id="btnOpenMemberSettings" class="btn-header-member">
+            👑 我的会员
+          </button>
+        </div>
+      </div>
+      
+      <!-- 全局会员资产快捷状态条 -->
+      <div class="member-quick-bar">
+        <div id="memberStatusSummary" class="member-summary-text">
+          <span>当前以基础挂牌价核算</span>
+        </div>
+        <button id="memberViewToggle" class="member-toggle-btn">
+          切换为实付价
+        </button>
+      </div>
+    </header>
+
+    <!-- V2 一键粘贴分享链接比价区 -->
+    <section class="v2-paste-entry-section">
+      <button id="btnOpenV2Parser" class="v2-trigger-card">
+        <div class="v2-trigger-left">
+          <div class="v2-trigger-icon">⚡</div>
+          <div class="v2-trigger-text-wrap">
+            <div class="v2-trigger-title">
+              <strong>V2 链接解析与比价</strong>
+              <span class="badge-v2-glow">新上线</span>
+            </div>
+            <div class="v2-trigger-desc">复制携程/美团/华住/飞猪的分享文案或链接，一键比价</div>
+          </div>
+        </div>
+        <div class="v2-trigger-arrow">➔</div>
+      </button>
+    </section>
+
+    <!-- 搜索与快捷筛选区 -->
+    <section class="search-section">
+      <div class="search-input-wrap">
+        <span class="search-icon">🔍</span>
+        <input 
+          type="text" 
+          id="searchInput" 
+          class="search-input" 
+          placeholder="搜索 20 家基准酒店 (如: 全季、亚朵、人民广场...)" 
+          autocomplete="off"
+        />
+      </div>
+
+      <!-- 城市快速切换药丸 -->
+      <div id="cityPills" class="pill-scroller">
+        <div class="pill active" data-city="全部">全部城市</div>
+        <div class="pill" data-city="上海">上海</div>
+        <div class="pill" data-city="北京">北京</div>
+        <div class="pill" data-city="杭州">杭州</div>
+        <div class="pill" data-city="成都">成都</div>
+        <div class="pill" data-city="三亚">三亚</div>
+        <div class="pill" data-city="深圳">深圳</div>
+        <div class="pill" data-city="广州">广州</div>
+      </div>
+
+      <!-- 类别快速筛选 -->
+      <div id="categoryPills" class="pill-scroller">
+        <div class="pill active" data-cat="全部">全部类型</div>
+        <div class="pill" data-cat="商旅连锁">商旅连锁</div>
+        <div class="pill" data-cat="奢华地标">奢华地标</div>
+        <div class="pill" data-cat="景区度假">景区度假</div>
+        <div class="pill" data-cat="华住专享">华住直销锚点</div>
+      </div>
+    </section>
+
+    <!-- 结果统计栏 -->
+    <div class="section-sub-bar">
+      <span id="resultCount">共 20 家基准酒店</span>
+      <span>基准房型 · 统一大床对齐</span>
+    </div>
+
+    <!-- 酒店卡片数据流 -->
+    <main id="hotelList" class="hotel-list">
+      <!-- 由 js/app.js 动态渲染 -->
+    </main>
+
+    <!-- 全局免责与估算说明条 -->
+    <footer class="disclaimer-banner">
+      <strong>⚠️ 规则估算与价格免责声明</strong><br>
+      本雷达展示之价格均由系统根据各大平台公开挂牌价与会员权益规则估算生成。实际可订房态、下单到手价及取消政策受各平台实时动态券包、大促库存及个性化风控影响，<strong>最终以各平台下单结算页面为准</strong>。如遇平台防爬熔断，系统已自动实施安全降级隔离。
+    </footer>
+
+    <!-- 底部操作导航栏 -->
+    <nav class="bottom-nav-bar">
+      <button id="tabRadar" class="nav-item active">
+        <span class="nav-icon">📡</span>
+        <span>比价雷达</span>
+      </button>
+      <button id="tabCalendar" class="nav-item">
+        <span class="nav-icon">📅</span>
+        <span>30天日历</span>
+      </button>
+      <button id="tabWatch" class="nav-item">
+        <span class="nav-icon">🔔</span>
+        <span>降价盯盘</span>
+      </button>
+      <button id="tabMember" class="nav-item">
+        <span class="nav-icon">👑</span>
+        <span>会员配置</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <!-- 详情抽屉 (Bottom Sheet: 渠道拆解与 30 天日历) -->
+  <div id="sheetOverlay" class="sheet-overlay"></div>
+  <div id="detailSheet" class="bottom-sheet">
+    <div class="sheet-handle-bar">
+      <div class="sheet-handle"></div>
+    </div>
+    
+    <div class="sheet-header">
+      <div>
+        <h2 id="sheetHotelName" class="sheet-hotel-name">酒店名称</h2>
+        <div id="sheetHotelMeta" class="sheet-hotel-meta">元数据说明</div>
+      </div>
+      <button id="sheetCloseBtn" class="sheet-close-btn">✕</button>
+    </div>
+
+    <div class="sheet-content-scroll">
+      <!-- 各渠道比价卡片 -->
+      <div>
+        <h4 style="font-size: 13px; color: #94a3b8; margin-bottom: 8px;">各渠道同房型实付比价</h4>
+        <div id="sheetChannels" class="sheet-channels">
+          <!-- 动态渲染渠道条目 -->
+        </div>
+      </div>
+
+      <!-- 30 天价格热力日历 -->
+      <div>
+        <h4 style="font-size: 13px; color: #94a3b8; margin-bottom: 8px;">未来 30 天价格热力走势</h4>
+        <div id="sheetCalendarContainer">
+          <!-- 动态渲染日历组件 -->
+        </div>
+      </div>
+    </div>
+
+    <div class="sheet-actions-bar">
+      <button id="sheetWatchBtn" class="btn-sheet-watch">
+        🔔 开启降价微信提醒 (低于最低价推送)
+      </button>
+    </div>
+  </div>
+
+  <!-- 会员资产设置模态框 -->
+  <div id="memberModalOverlay" class="sheet-overlay"></div>
+  <div id="memberModal" class="bottom-sheet">
+    <div class="sheet-handle-bar"><div class="sheet-handle"></div></div>
+    <div class="sheet-header">
+      <div>
+        <h2 class="sheet-hotel-name">👑 我的会员资产配置</h2>
+        <div class="sheet-hotel-meta">全局设一次，自动套用各平台券后实付估算</div>
+      </div>
+      <button id="closeMemberModalBtn" class="sheet-close-btn">✕</button>
+    </div>
+    <div class="sheet-content-scroll">
+      <div class="modal-form-group">
+        <label class="modal-label">携程会员等级</label>
+        <select id="selectCtripTier" class="modal-select">
+          <option value="normal">普通会员 (无折扣)</option>
+          <option value="gold">黄金会员 (约 95 折)</option>
+          <option value="diamond">钻石会员 (约 90 折)</option>
+        </select>
+      </div>
+
+      <div class="modal-form-group">
+        <label class="modal-label">美团酒店权益</label>
+        <select id="selectMeituanTier" class="modal-select">
+          <option value="normal">普通用户 (标价)</option>
+          <option value="shen">美团神会员 (每单立减 ¥30 专享神券)</option>
+        </select>
+      </div>
+
+      <div class="modal-form-group">
+        <label class="modal-label">华住会集团会员 (官方底价锚点)</label>
+        <select id="selectHuazhuTier" class="modal-select">
+          <option value="normal">星会员 (95 折)</option>
+          <option value="gold">金会员 (88 折 + 送 1 份早餐)</option>
+          <option value="platinum">铂金会员 (85 折 + 送 2 份早餐)</option>
+        </select>
+      </div>
+    </div>
+    <div class="sheet-actions-bar">
+      <button id="saveMemberBtn" class="btn-sheet-watch" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+        保存并重新核算全网价格
+      </button>
+    </div>
+  </div>
+
+  <!-- 双通道微信盯盘模态框 -->
+  <div id="watchModalOverlay" class="sheet-overlay"></div>
+  <div id="watchModal" class="bottom-sheet">
+    <div class="sheet-handle-bar"><div class="sheet-handle"></div></div>
+    <div class="sheet-header">
+      <div>
+        <h2 class="sheet-hotel-name">🔔 降价微信双通道盯盘配置</h2>
+        <div class="sheet-hotel-meta">主通道 (PushPlus) + 备用通道 (Server酱)，双重保险不哑火</div>
+      </div>
+      <button id="closeWatchModalBtn" class="sheet-close-btn">✕</button>
+    </div>
+    <div class="sheet-content-scroll">
+      <div class="modal-form-group">
+        <label class="modal-label">主通道：PushPlus Token (微信免费服务号直推)</label>
+        <input type="text" id="pushPlusTokenInput" class="modal-input" placeholder="填入 PushPlus Token (如未配置将进入模拟沙盒)" />
+      </div>
+
+      <div class="modal-form-group">
+        <label class="modal-label">备用通道：Server酱 Turbo SendKey (容灾通道)</label>
+        <input type="text" id="serverChanKeyInput" class="modal-input" placeholder="填入 Server酱 SendKey (主通道失效自动切换)" />
+      </div>
+
+      <button id="testPushBtn" class="btn-sheet-watch" style="background: rgba(255, 255, 255, 0.1); border: 1px solid var(--border-active); margin-top: 4px;">
+        🚀 立即发送双通道测试推送
+      </button>
+
+      <div id="pushTestLogs" class="push-log-box"></div>
+    </div>
+    <div class="sheet-actions-bar">
+      <button id="saveWatchCfgBtn" class="btn-sheet-watch" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+        保存盯盘通道配置
+      </button>
+    </div>
+  </div>
+
+  <!-- V2 智能解析比价模态框 -->
+  <div id="v2ModalOverlay" class="sheet-overlay"></div>
+  <div id="v2ParserModal" class="bottom-sheet v2-parser-sheet">
+    <div class="sheet-handle-bar"><div class="sheet-handle"></div></div>
+    <div class="sheet-header">
+      <div>
+        <h2 class="sheet-hotel-name">⚡ 全网链接解析与跨平台比价</h2>
+        <div class="sheet-hotel-meta">粘贴携程/美团/华住/飞猪分享文案，自动剔除营销噪点并跨网比价</div>
+      </div>
+      <button id="btnCloseV2Parser" class="sheet-close-btn">✕</button>
+    </div>
+
+    <div class="sheet-content-scroll">
+      <!-- 快捷试玩样本 -->
+      <div class="v2-samples-box">
+        <span class="v2-samples-title">快速试玩示例：</span>
+        <div id="v2SampleChips" class="v2-sample-chips-row">
+          <!-- 由 parser_ui.js 动态填充 -->
+        </div>
+      </div>
+
+      <!-- 输入框与剪贴板操作 -->
+      <div class="v2-input-card">
+        <textarea id="v2InputText" class="v2-textarea" placeholder="在此粘贴 OTA 分享文本或链接，例如：【携程旅行】全季酒店(上海人民广场店)... https://..."></textarea>
+        <div class="v2-input-footer">
+          <button id="btnReadClipboard" class="v2-btn-clipboard" type="button">
+            📋 读剪贴板
+          </button>
+          <span class="v2-privacy-hint">🔒 本地安全解析 · 不上传用户隐私</span>
+        </div>
+      </div>
+
+      <div id="v2ParseFeedback" class="v2-feedback-box hidden"></div>
+    </div>
+
+    <div class="sheet-actions-bar">
+      <button id="btnStartParse" class="btn-sheet-watch" style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);">
+        ⚡ 立即跨平台智能比价
+      </button>
+    </div>
+  </div>
+
+  <!-- 全局 Toast 提示 -->
+  <div id="toast" class="toast-msg"></div>
+
+  <!-- PWA Service Worker 注册 -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(err => {
+          console.log('SW registration skipped in sandbox', err);
+        });
+      });
+    }
+  </script>
+
+  <!-- 核心程序入口 -->
+  <script type="module" src="js/app.js"></script>
+
+</body>
+</html>

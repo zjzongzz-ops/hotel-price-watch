@@ -1,0 +1,42 @@
+name: Hotel Price Radar - Scheduled Watcher Cron
+
+on:
+  schedule:
+    # 每日早晚两次巡检：北京时间 09:00 (UTC 01:00) 与 18:00 (UTC 10:00)
+    - cron: '0 1,10 * * *'
+  workflow_dispatch:
+    # 支持在 GitHub 网页上手动一键触发
+
+jobs:
+  sweep-and-notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Price Watcher & Dual-Channel Dispatch
+        env:
+          PUSHPLUS_TOKEN: ${{ secrets.PUSHPLUS_TOKEN }}
+          SERVERCHAN_KEY: ${{ secrets.SERVERCHAN_KEY }}
+          ALERT_ON_CIRCUIT_BREAKER: 'true'
+        run: |
+          python -m server.watcher_cron
+
+      - name: Upload Heartbeat Log Artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: watcher-heartbeat-logs
+          path: server/watcher_heartbeat.log
+          retention-days: 7

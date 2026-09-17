@@ -1,0 +1,53 @@
+﻿name: Hotel Price Watch Cron
+
+on:
+  schedule:
+    # 每天北京时间 08:30, 12:30, 18:30 (对应 UTC 00:30, 04:30, 10:30) 定时巡检
+    - cron: '30 0,4,10 * * *'
+  workflow_dispatch:
+    inputs:
+      test_dispatch:
+        description: '是否发送一次微信双通道切备演练推送 (默认勾选)'
+        required: false
+        default: true
+        type: boolean
+
+jobs:
+  watch-sweep:
+    name: Hotel Radar Cloud Sweep & Watcher
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install fastapi uvicorn pydantic requests httpx
+
+      - name: Run Deep Links Quality Gate (实网双要素核验)
+        run: |
+          python -m server.verify_deep_links
+
+      - name: Run Cloud Price Sweep (云端定时降价盯盘与双通道推送)
+        env:
+          PUSHPLUS_TOKEN: ${{ secrets.PUSHPLUS_TOKEN }}
+          SERVERCHAN_KEY: ${{ secrets.SERVERCHAN_KEY }}
+          TEST_DISPATCH: ${{ github.event.inputs.test_dispatch || 'false' }}
+        run: |
+          python -m server.watcher_cron
+
+      - name: Upload Heartbeat Log Artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: watcher-heartbeat-log
+          path: server/watcher_heartbeat.log
+          if-no-files-found: ignore
