@@ -89,7 +89,7 @@ export const HOTELS_DATA = [
         breakfast: "含单早",
         cancelPolicy: "入住前1天24:00前可免费取消",
         status: "available",
-        url: "https://hotel.meituan.com/",
+        url: "https://i.meituan.com/awp/h5/hotel/search/search.html/awp/h5/hotel/search/search.html",
         memberHint: "美团神会员立减¥30"
       },
       huazhu: {
@@ -144,7 +144,7 @@ export const HOTELS_DATA = [
         breakfast: "含单早",
         cancelPolicy: "入住前1天可退",
         status: "available",
-        url: "https://hotel.meituan.com/",
+        url: "https://i.meituan.com/awp/h5/hotel/search/search.html/awp/h5/hotel/search/search.html",
         memberHint: "商家特惠券后立省"
       },
       huazhu: {
@@ -192,7 +192,7 @@ export const HOTELS_DATA = [
         breakfast: "含单早",
         cancelPolicy: "入住前1天可退",
         status: "available",
-        url: "https://hotel.meituan.com/"
+        url: "https://i.meituan.com/awp/h5/hotel/search/search.html/awp/h5/hotel/search/search.html"
       },
       huazhu: {
         platform: "华住会官方",
@@ -241,7 +241,7 @@ export const HOTELS_DATA = [
         breakfast: "无早餐",
         cancelPolicy: "不可取消",
         status: "available",
-        url: "https://hotel.meituan.com/"
+        url: "https://i.meituan.com/awp/h5/hotel/search/search.html/awp/h5/hotel/search/search.html"
       },
       huazhu: {
         platform: "华住会官方",
@@ -291,7 +291,7 @@ export const HOTELS_DATA = [
         breakfast: "含双早",
         cancelPolicy: "不可取消 (-8%)",
         status: "available",
-        url: "https://i.meituan.com",
+        url: "https://i.meituan.com/awp/h5/hotel/search/search.html",
         memberHint: "美团大额高星神券"
       },
       huazhu: {
@@ -338,7 +338,7 @@ export const HOTELS_DATA = [
         breakfast: "含双早+门票",
         cancelPolicy: "提前2天免费取消",
         status: "available",
-        url: "https://i.meituan.com"
+        url: "https://i.meituan.com/awp/h5/hotel/search/search.html"
       },
       huazhu: {
         platform: "非华住系",
@@ -383,7 +383,7 @@ export const HOTELS_DATA = [
         breakfast: "无早",
         cancelPolicy: "不可退",
         status: "available",
-        url: "https://i.meituan.com"
+        url: "https://i.meituan.com/awp/h5/hotel/search/search.html"
       },
       huazhu: {
         platform: "非华住系",
@@ -428,7 +428,7 @@ export const HOTELS_DATA = [
         breakfast: "含双早",
         cancelPolicy: "提前7天免费取消",
         status: "available",
-        url: "https://i.meituan.com"
+        url: "https://i.meituan.com/awp/h5/hotel/search/search.html"
       },
       huazhu: {
         platform: "非华住系",
@@ -473,7 +473,7 @@ export const HOTELS_DATA = [
         breakfast: "含单早",
         cancelPolicy: "不可取消",
         status: "available",
-        url: "https://i.meituan.com"
+        url: "https://i.meituan.com/awp/h5/hotel/search/search.html"
       },
       huazhu: {
         platform: "非华住系",
@@ -518,7 +518,7 @@ export const HOTELS_DATA = [
         breakfast: "无早",
         cancelPolicy: "不可取消",
         status: "available",
-        url: "https://i.meituan.com"
+        url: "https://i.meituan.com/awp/h5/hotel/search/search.html"
       },
       huazhu: {
         platform: "非华住系",
@@ -563,7 +563,7 @@ export const HOTELS_DATA = [
         breakfast: "无早",
         cancelPolicy: "不可退",
         status: "available",
-        url: "https://i.meituan.com"
+        url: "https://i.meituan.com/awp/h5/hotel/search/search.html"
       },
       huazhu: {
         platform: "华住会官方",
@@ -612,7 +612,7 @@ export const HOTELS_DATA = [
         breakfast: "含双早茶套餐",
         cancelPolicy: "提前2天可退",
         status: "available",
-        url: "https://i.meituan.com"
+        url: "https://i.meituan.com/awp/h5/hotel/search/search.html"
       },
       huazhu: {
         platform: "非华住系",
@@ -657,7 +657,7 @@ export const HOTELS_DATA = [
         breakfast: "含单早",
         cancelPolicy: "不可退",
         status: "available",
-        url: "https://i.meituan.com"
+        url: "https://i.meituan.com/awp/h5/hotel/search/search.html"
       },
       huazhu: {
         platform: "华住会官方",
@@ -706,7 +706,7 @@ export const HOTELS_DATA = [
         breakfast: "含双早",
         cancelPolicy: "提前5天可退",
         status: "available",
-        url: "https://i.meituan.com"
+        url: "https://i.meituan.com/awp/h5/hotel/search/search.html"
       },
       huazhu: {
         platform: "非华住系",
@@ -751,7 +751,7 @@ export const HOTELS_DATA = [
         breakfast: "无早",
         cancelPolicy: "不可退",
         status: "available",
-        url: "https://i.meituan.com"
+        url: "https://i.meituan.com/awp/h5/hotel/search/search.html"
       },
       huazhu: {
         platform: "非华住系",
@@ -796,7 +796,7 @@ export const HOTELS_DATA = [
         breakfast: "含单早",
         cancelPolicy: "提前24小时可退",
         status: "available",
-        url: "https://i.meituan.com"
+        url: "https://i.meituan.com/awp/h5/hotel/search/search.html"
       },
       huazhu: {
         platform: "非华住系",
@@ -841,7 +841,7 @@ export const HOTELS_DATA = [
         breakfast: "含单早",
         cancelPolicy: "提前1天可退",
         status: "available",
-        url: "https://i.meituan.com"
+        url: "https://i.meituan.com/awp/h5/hotel/search/search.html"
       },
       huazhu: {
         platform: "非华住系",
@@ -886,7 +886,7 @@ export const HOTELS_DATA = [
         breakfast: "含单早",
         cancelPolicy: "不可退",
         status: "available",
-        url: "https://i.meituan.com"
+        url: "https://i.meituan.com/awp/h5/hotel/search/search.html"
       },
       huazhu: {
         platform: "非华住系",
@@ -931,7 +931,7 @@ export const HOTELS_DATA = [
         breakfast: "含双早",
         cancelPolicy: "提前2天免费取消",
         status: "available",
-        url: "https://i.meituan.com"
+        url: "https://i.meituan.com/awp/h5/hotel/search/search.html"
       },
       huazhu: {
         platform: "非华住系",
@@ -976,7 +976,7 @@ export const HOTELS_DATA = [
         breakfast: "含双早",
         cancelPolicy: "不可取消",
         status: "available",
-        url: "https://i.meituan.com"
+        url: "https://i.meituan.com/awp/h5/hotel/search/search.html"
       },
       huazhu: {
         platform: "非华住系",

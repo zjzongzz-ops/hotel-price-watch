@@ -27,7 +27,7 @@ HEADERS = {
 
 BASE_CHANNEL_HOMEPAGES = {
     "ctrip": "https://m.ctrip.com/webapp/hotel/",
-    "meituan": "https://hotel.meituan.com/",
+    "meituan": "https://i.meituan.com/awp/h5/hotel/search/search.html",
     "huazhu": "https://m.huazhu.com/",
     "fliggy": "https://m.fliggy.com/"
 }
@@ -38,6 +38,7 @@ BASE_URL_WHITELIST = {
     "https://m.ctrip.com/webapp/hotel",
     "https://m.ctrip.com/",
     "https://m.ctrip.com",
+    "https://i.meituan.com/awp/h5/hotel/search/search.html",
     "https://hotel.meituan.com/",
     "https://hotel.meituan.com",
     "https://i.meituan.com/",

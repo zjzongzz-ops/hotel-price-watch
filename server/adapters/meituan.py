@@ -40,7 +40,7 @@ class MeituanAdapter(BaseChannelAdapter):
             "cancel_policy": "入住前1天24:00前可免费取消",
             "status": "available",
             "is_official": False,
-            "url": "https://i.meituan.com"
+            "url": "https://i.meituan.com/awp/h5/hotel/search/search.html"
         }
 
         set_cached_price(cache_key, raw_result, ttl=7200)
