@@ -1,4 +1,5 @@
 import { openBottomSheet, closeBottomSheet } from "./animations.js";
+import { parseAndMatchClientSide } from "./client_matcher.js";
 
 export function initV2Parser(state, elements, onHotelParsed, showToast) {
   const btnOpen = document.getElementById("btnOpenV2Parser");
@@ -117,6 +118,7 @@ export function initV2Parser(state, elements, onHotelParsed, showToast) {
     `;
     btnParse.disabled = true;
 
+    let quote = null;
     try {
       const resp = await fetch("/api/v2/parse", {
         method: "POST",
@@ -127,29 +129,46 @@ export function initV2Parser(state, elements, onHotelParsed, showToast) {
         })
       });
 
-      const res = await resp.json();
-      if (!res.success) {
-        feedbackBox.innerHTML = `❌ 解析失败: ${res.error || "未能识别出有效酒店实体"}`;
+      if (resp.ok) {
+        const res = await resp.json();
+        if (res.success) {
+          quote = res.comparison;
+        }
+      }
+    } catch (e) {
+      // 网络不可达或纯静态托管环境，继续向下走纯前端引擎兜底
+    }
+
+    // 若服务端不可达或失败，无缝启用客户端纯本地引擎
+    if (!quote) {
+      try {
+        const localRes = parseAndMatchClientSide(raw, state.profile);
+        if (localRes && localRes.success) {
+          quote = localRes.comparison;
+        }
+      } catch (clientErr) {
+        feedbackBox.innerHTML = `❌ 本地解析失败: ${clientErr.message}`;
         btnParse.disabled = false;
         return;
       }
-
-      const quote = res.comparison;
-      feedbackBox.innerHTML = `✅ 成功识别【${quote.hotel_name}】(${quote.city})！正在生成比价卡片...`;
-
-      setTimeout(() => {
-        closeModal();
-        btnParse.disabled = false;
-        if (onHotelParsed) {
-          onHotelParsed(quote);
-        }
-        showToast(`🎉 成功解析【${quote.hotel_name}】，已置顶生成比价卡片！`, 3000);
-      }, 500);
-
-    } catch (err) {
-      feedbackBox.innerHTML = `❌ 网络异常: ${err.message}`;
-      btnParse.disabled = false;
     }
+
+    if (!quote) {
+      feedbackBox.innerHTML = `❌ 未能识别出有效酒店实体，请检查文案`;
+      btnParse.disabled = false;
+      return;
+    }
+
+    feedbackBox.innerHTML = `✅ 成功识别【${quote.hotel_name}】(${quote.city})！正在生成比价卡片...`;
+
+    setTimeout(() => {
+      closeModal();
+      btnParse.disabled = false;
+      if (onHotelParsed) {
+        onHotelParsed(quote);
+      }
+      showToast(`🎉 成功解析【${quote.hotel_name}】，已置顶生成比价卡片！`, 3000);
+    }, 500);
   });
 }
 
